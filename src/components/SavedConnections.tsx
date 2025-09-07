@@ -7,16 +7,14 @@ import { SSHConnection } from "@/pages/Index";
 interface SavedConnectionsProps {
   connections: SSHConnection[];
   onDelete: (id: string) => void;
+  onConnect: (connection: SSHConnection) => void;
 }
 
-export const SavedConnections = ({ connections, onDelete }: SavedConnectionsProps) => {
+export const SavedConnections = ({ connections, onDelete, onConnect }: SavedConnectionsProps) => {
   const { toast } = useToast();
 
   const handleConnect = (connection: SSHConnection) => {
-    toast({
-      title: "Connection Attempt",
-      description: `Attempting to connect to ${connection.username}@${connection.ipAddress}`,
-    });
+    onConnect(connection);
   };
 
   const handleDelete = (connection: SSHConnection) => {
@@ -60,7 +58,7 @@ export const SavedConnections = ({ connections, onDelete }: SavedConnectionsProp
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-muted-foreground text-xs">
                       <Globe className="w-3 h-3" />
-                      <span className="font-mono">{connection.ipAddress}</span>
+                      <span className="font-mono">{connection.ipAddress}:{connection.port}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground text-xs">
                       <User className="w-3 h-3" />
@@ -86,7 +84,7 @@ export const SavedConnections = ({ connections, onDelete }: SavedConnectionsProp
                 onClick={() => handleConnect(connection)}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-mono text-sm shadow-glow"
               >
-                Connect to {connection.username}@{connection.ipAddress}
+                Connect to {connection.username}@{connection.ipAddress}:{connection.port}
               </Button>
             </div>
           ))}

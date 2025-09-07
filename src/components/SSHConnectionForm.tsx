@@ -7,13 +7,15 @@ import { useToast } from "@/hooks/use-toast";
 import { Terminal, Save } from "lucide-react";
 
 interface SSHConnectionFormProps {
-  onSave: (connection: { name: string; ipAddress: string; username: string }) => void;
+  onSave: (connection: { name: string; ipAddress: string; username: string; port: number }) => void;
+  onConnect: (connection: { name: string; ipAddress: string; username: string; port: number; id: string; createdAt: Date }) => void;
 }
 
-export const SSHConnectionForm = ({ onSave }: SSHConnectionFormProps) => {
+export const SSHConnectionForm = ({ onSave, onConnect }: SSHConnectionFormProps) => {
   const [ipAddress, setIpAddress] = useState("");
   const [username, setUsername] = useState("");
   const [connectionName, setConnectionName] = useState("");
+  const [port, setPort] = useState("");
   const { toast } = useToast();
 
   const validateForm = () => {
@@ -52,22 +54,29 @@ export const SSHConnectionForm = ({ onSave }: SSHConnectionFormProps) => {
   const handleConnect = () => {
     if (!validateForm()) return;
 
-    // Since this is a web app, we can't actually establish SSH connections
-    // Instead, we'll show a message about the connection attempt
-    toast({
-      title: "Connection Attempt",
-      description: `Attempting to connect to ${username}@${ipAddress}`,
-    });
+    const portNumber = port.trim() ? parseInt(port.trim()) : 22;
+    const connectionData = {
+      id: crypto.randomUUID(),
+      name: connectionName.trim() || `${username}@${ipAddress}`,
+      ipAddress: ipAddress.trim(),
+      username: username.trim(),
+      port: portNumber,
+      createdAt: new Date(),
+    };
+
+    onConnect(connectionData);
   };
 
   const handleSave = () => {
     if (!validateForm()) return;
 
+    const portNumber = port.trim() ? parseInt(port.trim()) : 22;
     const name = connectionName.trim() || `${username}@${ipAddress}`;
     onSave({
       name,
       ipAddress: ipAddress.trim(),
       username: username.trim(),
+      port: portNumber,
     });
 
     toast({
@@ -79,6 +88,7 @@ export const SSHConnectionForm = ({ onSave }: SSHConnectionFormProps) => {
     setIpAddress("");
     setUsername("");
     setConnectionName("");
+    setPort("");
   };
 
   return (
@@ -117,18 +127,35 @@ export const SSHConnectionForm = ({ onSave }: SSHConnectionFormProps) => {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="username" className="text-foreground font-mono text-sm">
-            Username *
-          </Label>
-          <Input
-            id="username"
-            placeholder="root"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="bg-input border-border text-foreground font-mono placeholder:text-muted-foreground"
-            required
-          />
+        <div className="flex gap-3">
+          <div className="flex-1 space-y-2">
+            <Label htmlFor="username" className="text-foreground font-mono text-sm">
+              Username *
+            </Label>
+            <Input
+              id="username"
+              placeholder="root"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="bg-input border-border text-foreground font-mono placeholder:text-muted-foreground"
+              required
+            />
+          </div>
+          <div className="w-24 space-y-2">
+            <Label htmlFor="port" className="text-foreground font-mono text-sm">
+              Port
+            </Label>
+            <Input
+              id="port"
+              placeholder="22"
+              value={port}
+              onChange={(e) => setPort(e.target.value)}
+              className="bg-input border-border text-foreground font-mono placeholder:text-muted-foreground text-center"
+              type="number"
+              min="1"
+              max="65535"
+            />
+          </div>
         </div>
 
         <div className="flex gap-3 pt-4">
