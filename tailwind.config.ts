@@ -47,6 +47,9 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        terminal: {
+          glow: "hsl(var(--terminal-glow))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -62,6 +65,17 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        "gradient-terminal": "var(--gradient-terminal)",
+        "gradient-card": "var(--gradient-card)",
+      },
+      boxShadow: {
+        "terminal": "var(--shadow-terminal)",
+        "glow": "var(--shadow-glow)",
+      },
+      fontFamily: {
+        mono: ["JetBrains Mono", "Fira Code", "Monaco", "Consolas", "monospace"],
       },
       keyframes: {
         "accordion-down": {
